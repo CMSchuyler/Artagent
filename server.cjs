@@ -906,6 +906,7 @@ app.use('/api/liblibai', createProxyMiddleware({
     // 可在此处添加自定义 header 或日志
     // 例如：proxyReq.setHeader('Authorization', 'Bearer xxx');
     console.log('代理收到请求方法:', req.method, req.originalUrl);
+    proxyReq.method = 'POST';
   },
   onProxyRes: (proxyRes, req, res) => {
     // 可在此处处理响应
