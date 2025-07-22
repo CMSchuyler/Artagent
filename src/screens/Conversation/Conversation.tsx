@@ -2458,7 +2458,6 @@ export const Conversation = (): JSX.Element => {
                             <button 
                               onClick={() => {
                                 setShowPaintingComment(false);
-                                resetImageEditing();
                               }}
                               className="text-gray-500 hover:text-gray-700"
                               aria-label="关闭"
@@ -2651,7 +2650,6 @@ export const Conversation = (): JSX.Element => {
                                     <button 
                                       onClick={() => {
                                         setShowPaintingComment(false);
-                                        resetImageEditing();
                                       }}
                                       className="text-gray-500 hover:text-gray-700"
                                       aria-label="关闭"
