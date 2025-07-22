@@ -3,27 +3,23 @@ export const config = {
 };
 
 export default async function handler(req) {
-  const { pathname, search } = new URL(req.url);
-  // 去掉 /api/liblibai 前缀
-  const targetPath = pathname.replace(/^\/api\/liblibai/, '');
-  const url = `https://openapi.liblibai.cloud${targetPath}${search}`;
-
-  // 构造 headers
-  const headers = new Headers(req.headers);
-  headers.set('referer', 'https://openapi.liblibai.cloud');
-  headers.set('origin', 'https://openapi.liblibai.cloud');
-
-  // 处理 body
-  let body = null;
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
-    body = req.body;
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
   }
 
-  // 代理请求
+  const { path, signatureParams, data } = await req.json();
+  const url = `https://openapi.liblibai.cloud${path}?${signatureParams}`;
+
+  const headers = new Headers({
+    'content-type': 'application/json',
+    'referer': 'https://openapi.liblibai.cloud',
+    'origin': 'https://openapi.liblibai.cloud'
+  });
+
   const apiRes = await fetch(url, {
-    method: req.method,
+    method: 'POST',
     headers,
-    body,
+    body: JSON.stringify(data),
     redirect: 'manual',
   });
 
