@@ -898,7 +898,10 @@ app.get('/api/debate-history', (req, res) => {
 /**
  * 代理 /api/liblibai 路由，将请求转发到 https://openapi.liblibai.cloud
  */
-app.use('/api/liblibai', createProxyMiddleware({
+app.use('/api/liblibai', (req, res, next) => {
+  console.log('Express 收到 /api/liblibai 路由请求:', req.method, req.originalUrl);
+  next();
+}, createProxyMiddleware({
   target: 'https://openapi.liblibai.cloud',
   changeOrigin: true,
   pathRewrite: { '^/api/liblibai': '' },
