@@ -1,8 +1,8 @@
 export const config = {
   runtime: 'edge',
-}
+};
 
-export default async function handler(req: Request) {
+export default async function handler(req) {
   const { pathname, search } = new URL(req.url);
   // 去掉 /api/liblibai 前缀
   const targetPath = pathname.replace(/^\/api\/liblibai/, '');
@@ -14,7 +14,7 @@ export default async function handler(req: Request) {
   headers.set('origin', 'https://openapi.liblibai.cloud');
 
   // 处理 body
-  let body: BodyInit | null = null;
+  let body = null;
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     body = req.body;
   }
@@ -27,9 +27,7 @@ export default async function handler(req: Request) {
     redirect: 'manual',
   });
 
-  // 构造响应
   const resHeaders = new Headers(apiRes.headers);
-  // 可根据需要过滤/修改响应头
 
   return new Response(apiRes.body, {
     status: apiRes.status,
