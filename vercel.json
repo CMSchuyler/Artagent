@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/liblibai.ts": {
+    "api/liblibai.js": {
       "runtime": "now-php@1.0.0"
     }
   }
