@@ -893,16 +893,6 @@ app.get('/api/debate-history', (req, res) => {
   res.json({ success: true, history: session.chatHistory });
 });
 
-// ================== 错误处理 ==================
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ success: false, error: '服务器内部错误' });
-});
-
-// ================== 启动服务器 ==================
-app.listen(port, () => {
-  console.log(`服务器已启动，监听端口 ${port}`);
-}); 
 
 // ========== liblibai 代理路由 ==========
 /**
