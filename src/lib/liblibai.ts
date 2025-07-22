@@ -5,7 +5,7 @@ export class LiblibAIService {
   private apiKey: string;
   private apiSecret: string;
   private baseURL: string = 'https://openapi.liblibai.cloud';
-  private proxyURL: string = 'https://artagent.onrender.com/api/liblibai'; // 使用代理URL
+  private proxyURL: string = '/api/liblibai'; // 使用代理URL
   
   // 阿里云OSS基础URL
   public static ossBaseUrl: string = 'https://liblibai-airship-temp.oss-cn-beijing.aliyuncs.com';
