@@ -1,7 +1,1 @@
-{
-  "functions": {
-    "api/liblibai.js": {
-      "runtime": "edge"
-    }
-  }
-}
+
