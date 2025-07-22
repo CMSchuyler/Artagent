@@ -901,18 +901,20 @@ app.get('/api/debate-history', (req, res) => {
 app.use('/api/liblibai', (req, res, next) => {
   console.log('Express 收到 /api/liblibai 路由请求:', req.method, req.originalUrl);
   next();
-}, createProxyMiddleware({
+});
+
+// 再注册代理
+app.use('/api/liblibai', createProxyMiddleware({
   target: 'https://openapi.liblibai.cloud',
   changeOrigin: true,
   pathRewrite: { '^/api/liblibai': '' },
   onProxyReq: (proxyReq, req, res) => {
-    // 可在此处添加自定义 header 或日志
-    // 例如：proxyReq.setHeader('Authorization', 'Bearer xxx');
     console.log('代理收到请求方法:', req.method, req.originalUrl);
-    proxyReq.method = 'POST';
-  },
-  onProxyRes: (proxyRes, req, res) => {
-    // 可在此处处理响应
+    const protocol = 'https:';
+    const host = proxyReq.getHeader('host');
+    const path = proxyReq.path;
+    const fullUrl = `${protocol}//${host}${path}`;
+    console.log('后端即将代理到:', fullUrl);
   },
   secure: false
 }));
