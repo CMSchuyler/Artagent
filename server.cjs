@@ -8,7 +8,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 
 const app = express();
-const port = 3002; // 统一端口
+const port = process.env.PORT || 3002;
 
 // ================== 全局配置 ==================
 
