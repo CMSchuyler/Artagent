@@ -5,7 +5,8 @@ export class LiblibAIService {
   private apiKey: string;
   private apiSecret: string;
   private baseURL: string = 'https://openapi.liblibai.cloud';
-  private proxyURL: string = '/api/liblibai'; // 使用代理URL
+  // 只请求 /api/liblibai，剩下的路径和参数都交由 Edge Function 处理
+  private proxyURL: string = '/api/liblibai';
   
   // 阿里云OSS基础URL
   public static ossBaseUrl: string = 'https://liblibai-airship-temp.oss-cn-beijing.aliyuncs.com';
@@ -66,9 +67,8 @@ export class LiblibAIService {
       // 构建请求路径
       const path = '/api/generate/upload/signature';
       const signatureParams = this.buildSignatureParams(path);
-      const fullUrl = `${this.proxyURL}${path}?${signatureParams}`;
       
-      console.log('签名请求URL:', fullUrl);
+      console.log('签名请求URL:', this.proxyURL);
       
       // 请求数据
       const data = {
@@ -79,12 +79,16 @@ export class LiblibAIService {
       console.log('签名请求数据:', data);
       
       // 发送请求
-      const response = await axios.post(fullUrl, data, {
+      const response = await axios.post(this.proxyURL, {
+        path,
+        signatureParams,
+        data: data
+      }, {
         headers: {
           'Content-Type': 'application/json'
         },
         withCredentials: false,
-        timeout: 150000
+        timeout: 30000
       });
       
       console.log('获取签名响应:', response.data);
@@ -293,19 +297,15 @@ export class LiblibAIService {
       const path = '/api/generate/comfyui/app';
       const signatureParams = this.buildSignatureParams(path);
       
-      // 构建完整的URL
-      const fullUrl = `${this.proxyURL}${path}?${signatureParams}`;
-      
-      console.log('请求参数:', params);
-      console.log('请求URL:', fullUrl);
-      
-      // 使用代理URL
-      const response = await axios.post(fullUrl, params, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
+      // 只请求 /api/liblibai，参数放 body
+      const response = await axios.post(this.proxyURL, {
+        path,
+        signatureParams,
+        data: params
+      }, {
+        headers: { 'Content-Type': 'application/json' },
         withCredentials: false,
-        timeout: 150000
+        timeout: 30000
       });
       
       console.log('生成响应:', response.data);
@@ -339,25 +339,15 @@ export class LiblibAIService {
       const path = `/api/generate/comfy/status`;
       const signatureParams = this.buildSignatureParams(path);
       
-      // 构建完整的URL
-      const fullUrl = `${this.proxyURL}${path}?${signatureParams}`;
-      
-      console.log('查询状态URL:', fullUrl);
-      
-      // 请求体数据
-      const data = {
-        generateUuid: generateUuid
-      };
-      
-      console.log('查询状态请求体:', data);
-      
-      // 使用代理URL，使用POST方法
-      const response = await axios.post(fullUrl, data, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
+      // 只请求 /api/liblibai，参数放 body
+      const response = await axios.post(this.proxyURL, {
+        path,
+        signatureParams,
+        data: { generateUuid }
+      }, {
+        headers: { 'Content-Type': 'application/json' },
         withCredentials: false,
-        timeout: 150000
+        timeout: 30000
       });
       
       console.log('查询响应:', response.data);
