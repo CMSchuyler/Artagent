@@ -6,6 +6,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 const FormData = require('form-data');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -891,6 +892,35 @@ app.get('/api/debate-history', (req, res) => {
   }
   res.json({ success: true, history: session.chatHistory });
 });
+
+// ================== 错误处理 ==================
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ success: false, error: '服务器内部错误' });
+});
+
+// ================== 启动服务器 ==================
+app.listen(port, () => {
+  console.log(`服务器已启动，监听端口 ${port}`);
+}); 
+
+// ========== liblibai 代理路由 ==========
+/**
+ * 代理 /api/liblibai 路由，将请求转发到 https://openapi.liblibai.cloud
+ */
+app.use('/api/liblibai', createProxyMiddleware({
+  target: 'https://openapi.liblibai.cloud',
+  changeOrigin: true,
+  pathRewrite: { '^/api/liblibai': '' },
+  onProxyReq: (proxyReq, req, res) => {
+    // 可在此处添加自定义 header 或日志
+    // 例如：proxyReq.setHeader('Authorization', 'Bearer xxx');
+  },
+  onProxyRes: (proxyRes, req, res) => {
+    // 可在此处处理响应
+  },
+  secure: false
+}));
 
 // ================== 错误处理 ==================
 app.use((err, req, res, next) => {
