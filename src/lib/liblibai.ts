@@ -84,7 +84,7 @@ export class LiblibAIService {
           'Content-Type': 'application/json'
         },
         withCredentials: false,
-        timeout: 90000
+        timeout: 150000
       });
       
       console.log('获取签名响应:', response.data);
@@ -305,7 +305,7 @@ export class LiblibAIService {
           'Content-Type': 'application/json'
         },
         withCredentials: false,
-        timeout: 90000
+        timeout: 150000
       });
       
       console.log('生成响应:', response.data);
@@ -357,7 +357,7 @@ export class LiblibAIService {
           'Content-Type': 'application/json'
         },
         withCredentials: false,
-        timeout: 90000
+        timeout: 150000
       });
       
       console.log('查询响应:', response.data);
