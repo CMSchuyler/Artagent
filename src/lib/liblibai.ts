@@ -5,8 +5,15 @@ export class LiblibAIService {
   private apiKey: string;
   private apiSecret: string;
   private baseURL: string = 'https://openapi.liblibai.cloud';
-  // 只请求 /api/liblibai，剩下的路径和参数都交由 Edge Function 处理
-  private proxyURL: string = '/api/liblibai';
+   /**
+   * liblibai 代理接口URL，开发环境下指向本地3002端口，生产环境下为相对路径
+   * @type {string}
+   */
+  private proxyURL: string =
+    typeof window !== 'undefined' && window.location && window.location.hostname === 'localhost'
+      ? 'http://localhost:3002/api/liblibai'
+      : '/api/liblibai';
+  
   
   // 阿里云OSS基础URL
   public static ossBaseUrl: string = 'https://liblibai-airship-temp.oss-cn-beijing.aliyuncs.com';

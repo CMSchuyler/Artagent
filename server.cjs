@@ -897,27 +897,31 @@ app.get('/api/debate-history', (req, res) => {
 // ========== liblibai 代理路由 ==========
 /**
  * 代理 /api/liblibai 路由，将请求转发到 https://openapi.liblibai.cloud
+ * 前端会以 { path, signatureParams, data } 结构POST到本接口
+ * 后端需解包后转发到真实API
  */
-app.use('/api/liblibai', (req, res, next) => {
-  console.log('Express 收到 /api/liblibai 路由请求:', req.method, req.originalUrl);
-  next();
+app.post('/api/liblibai', async (req, res) => {
+  try {
+    const { path, signatureParams, data } = req.body;
+    if (!path || !signatureParams) {
+      return res.status(400).json({ code: -1, msg: '缺少 path 或 signatureParams' });
+    }
+    const url = `https://openapi.liblibai.cloud${path}?${signatureParams}`;
+    // 直接转发 data
+    const response = await axios.post(url, data, {
+      headers: { 'Content-Type': 'application/json' },
+      timeout: 30000
+    });
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    console.error('liblibai 代理请求失败:', error?.response?.data || error.message);
+    if (error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      res.status(500).json({ code: -1, msg: error.message || '服务器内部错误' });
+    }
+  }
 });
-
-// 再注册代理
-app.use('/api/liblibai', createProxyMiddleware({
-  target: 'https://openapi.liblibai.cloud',
-  changeOrigin: true,
-  pathRewrite: { '^/api/liblibai': '' },
-  onProxyReq: (proxyReq, req, res) => {
-    console.log('代理收到请求方法:', req.method, req.originalUrl);
-    const protocol = 'https:';
-    const host = proxyReq.getHeader('host');
-    const path = proxyReq.path;
-    const fullUrl = `${protocol}//${host}${path}`;
-    console.log('后端即将代理到:', fullUrl);
-  },
-  secure: false
-}));
 
 // ================== 错误处理 ==================
 app.use((err, req, res, next) => {
