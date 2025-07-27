@@ -12,7 +12,7 @@ export class LiblibAIService {
   private proxyURL: string =
     typeof window !== 'undefined' && window.location && window.location.hostname === 'localhost'
       ? 'http://localhost:3002/api/liblibai'
-      : '/api/liblibai';
+      : 'https://artagent.onrender.com/api/liblibai';
   
   
   // 阿里云OSS基础URL
